@@ -19,6 +19,33 @@ import org.springframework.web.bind.annotation.RestController;
 import com.accesodatos.springbootjdbctemplate.models.Actor;
 import com.accesodatos.springbootjdbctemplate.service.ActorService;
 
+/**
+ * This is a Spring RESTful web service controller class, responsible for
+ * handling HTTP requests related to Actors.
+ * 
+ * The class is annotated with @RestController which is a combination
+ * of @Controller and @ResponseBody and indicates that this class is a
+ * controller and all its methods will return response data.
+ * 
+ * @RequestMapping("/api/v2") indicates that all the requests handled by this
+ * controller will start with "/api/v2".
+ * 
+ * The class has the following methods:
+ * 
+ * 1. getAllActors
+ * 2. createActor
+ * 3. getActorById
+ * 4. deleteActor
+ * 5. updateActor
+ * 6. getActorByFirstName
+ * 
+ * In each method, the class returns an instance of ResponseEntity with
+ * appropriate HTTP status codes and response data.
+ * 
+ * The class also uses the ActorService class for retrieving and modifying Actor
+ * information. It is autowired using the @Autowired annotation.
+ */
+
 @RestController
 @RequestMapping("/api/v2")
 public class ActorController {
@@ -26,6 +53,11 @@ public class ActorController {
     @Autowired
     ActorService actorService;
 
+    /**
+     * Handles a GET request to "/api/v2/actors" and returns a list of all Actors.
+     * 
+     * @return ResponseEntity with a list of all Actors and HTTP status code.
+     */
     @GetMapping("/actors")
     public ResponseEntity<List<Actor>> getAllActors() {
         try {
@@ -42,6 +74,13 @@ public class ActorController {
         }
     }
 
+    /**
+     * Handles a POST request to "/api/v2/actors" and creates a new Actor with the
+     * information provided in the request body.
+     * 
+     * @param actor
+     * @return ResponseEntity with a message and HTTP status code.
+     */
     @PostMapping("/actors")
     public ResponseEntity<String> createActor(@RequestBody Actor actor) {
         try {
@@ -55,6 +94,13 @@ public class ActorController {
         }
     }
 
+    /**
+     * Handles a GET request to "/api/v2/actors/{actor_id}" and returns an Actor
+     * with the specified id.
+     * 
+     * @param actor_id
+     * @return ResponseEntity with an Actor and HTTP status code.
+     */
     @GetMapping("/actors/{actor_id}")
     public ResponseEntity<Actor> getActorById(@PathVariable("actor_id") int actor_id) {
         try {
@@ -68,18 +114,31 @@ public class ActorController {
         }
     }
 
+    /**
+     * Handles a DELETE request to "/api/v2/actors/{actor_id}" and deletes the
+     * Actor with the specified id.
+     * 
+     * @param actor_id
+     * @return ResponseEntity with a message and HTTP status code.
+     */
     @DeleteMapping("/actors/{actor_id}")
-    public ResponseEntity<String> deleteActorById(@PathVariable("actor_id") int actor_id) {
-        try {
-            if (actorService.deleteActorById(actor_id)) {
-                return new ResponseEntity<>("Cannot find Actor with id = " + actor_id, HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>("Actor deleted succesfully", HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Actor wasn't deleted", HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<String> deleteActor(@PathVariable("actor_id") int actor_id) {
+        int result = actorService.deleteActorById(actor_id);
+        if (result == 0) {
+            return new ResponseEntity<>("Cannot find Actor with id = " + actor_id, HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>("Actor deleted successfully", HttpStatus.OK);
         }
     }
 
+    /**
+     * Handles a PUT request to "/api/v2/actors/{actor_id}" and updates the Actor
+     * with the specified id.
+     * 
+     * @param actor_id
+     * @param actor
+     * @return ResponseEntity with a message and HTTP status code.
+     */
     @PutMapping("/actors/{actor_id}")
     public ResponseEntity<String> updateActor(@PathVariable("actor_id") int actor_id, @RequestBody Actor actor) {
         try {
@@ -96,6 +155,13 @@ public class ActorController {
         }
     }
 
+    /**
+     * Handles a GET request to "/api/v2/actors/search" and returns a list of
+     * Actors with the specified first name.
+     * 
+     * @param first_name
+     * @return ResponseEntity with a list of Actors and HTTP status code.
+     */
     @GetMapping("/actors/search")
     public ResponseEntity<List<Actor>> getActorByFirstName(@RequestParam("first_name") String first_name) {
         try {
